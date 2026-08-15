@@ -1,0 +1,4 @@
+opencv-contrib-python
+caer
+matplotlib
+ultralytics
