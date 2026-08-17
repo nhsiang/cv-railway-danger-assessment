@@ -1,6 +1,6 @@
 # cv-railway-danger-assessment
 Computer vision research project using OpenCV and Ultralytics YOLO. Analyze railway tracks and return appropriate responses based on different situations.
-## Steps
+## Methods
 - ### YOLO object detection
   - Use the default YOLO26 nano model
   - Draw out bounding boxes, if overlaps with `rail-track`, `rail-raised`, or `rail-embedded` masks, a warning is displayed on screen
@@ -8,7 +8,7 @@ Computer vision research project using OpenCV and Ultralytics YOLO. Analyze rail
   - Use the YOLO26 nano semantic model
   - Train the model using `python train.py`, set the argument `epochs=50`
   - After the model yields sufficient results, isolate the `rail-track` mask
-  - From top to bottom of the `rail-track` mask, scan the $y\text{-axis}$ to see if the mask exist at that $y$, if so, calculate the midpoint $\frac{x_\text{left_most}+x_\text{right_most}}{2}$ and store it in `coords`
+  - From top to bottom of the `rail-track` mask, scan the $y\text{-axis}$ to see if the mask exist at that $y$, if so, calculate the midpoint $\frac{x_\text{left most}+x_\text{right most}}{2}$ and store it in `coords`
   - Plot a second degree polynomial using `coords` derived from above, and calculate the curvature using the formula $κ(y)=\frac{|f''(y)|}{(1+[f'(y)]^2)^\frac{3}{2}}$
   - The final curvature used to determine the message on screen is $\kappa(y)_\text{median}$, if $\kappa(y)_\text{median}>0.001$, the railway is curved and a warning message is displayed
 
