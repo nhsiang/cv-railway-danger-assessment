@@ -10,7 +10,7 @@ Computer vision research project using OpenCV and Ultralytics YOLO. Analyzes rai
   - After the model yields sufficient results, isolate the `rail-track` mask
   - Scan the `rail-track` mask along the $y\text{-axis}$ from bottom to top to see if the mask exists at each $y$. If so, calculate the midpoint $\frac{x_\text{leftmost}+x_\text{rightmost}}{2}$ and store it in `coords`
   - Plot a second-degree polynomial using the `coords` derived from above, and calculate the curvature using the formula $κ(y)=\frac{|f''(y)|}{(1+[f'(y)]^2)^\frac{3}{2}}$
-  - The median curvature, $`κ(y)_{\text{median}}`$, is used to determine the message on screen. If $`κ(y)_{\text{median}}>\text{curvature_threshold}`$, the railway is curved and a warning message is displayed. This curvature and threshold are relative and not absolute.
+  - The median curvature, $`κ(y)_{\text{median}}`$, is used to determine the message on screen. If $`κ(y)_{\text{median}}>\text{curvature\_threshold}`$, the railway is curved and a warning message is displayed. This curvature and threshold are relative and not absolute.
 
   **IMPORTANT: This should not be used to determine railway curvature! For demonstration purposes, the formula is simplified. To obtain an industry-accepted measurement, more data about the vehicle is required.**
 ## Results
