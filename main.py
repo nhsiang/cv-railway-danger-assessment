@@ -4,14 +4,14 @@ from ultralytics import YOLO
 
 model_detection = YOLO("models/yolo26n.pt")
 model_segmentation = YOLO("models/runs/semantic/train/weights/best.pt")
-video = cv.VideoCapture('./assets/video/kibukawa_to_minakuchijyonan.mp4')
+video = cv.VideoCapture('./assets/video/curved_track.mp4')
 
 while True:
     isTrue, frame = video.read()
-    frame = frame[540:1060,580:1450]
+    is_overlapping = False
 
     results_detection, results_segmentation = model_detection(frame), model_segmentation(frame)
-    # boxes = results_detection[0]
+    boxes = results_detection[0].boxes.xyxy.cpu().numpy().astype(int)
     masks = results_segmentation[0].semantic_mask.data.cpu().numpy()
 
     # for i in [1, 2, 3]: # verifying masks
@@ -19,6 +19,13 @@ while True:
     #     cv.imshow(f"class {i}", mask)
 
     track_mask = (masks == 1).astype(np.uint8)
+
+    # check object bounding box overlap with rail properties
+    for x1, y1, x2, y2 in boxes:
+        box_region = masks[y1:y2, x1:x2]
+        if np.any(np.isin(box_region, [1, 2, 3])):
+            is_overlapping = True
+            break
 
     # plot railway path (based on mask rail-track)
     coords = []
@@ -46,12 +53,18 @@ while True:
     else:
         status = "NORMAL"
 
+    if is_overlapping:
+        detect_status = "CAUTION: OBJECT ON RAIL"
+    else:
+        detect_status = "NORMAL"
+
     # output
-    screen = frame.copy()
+    screen = results_detection[0].plot()
     cv.putText(screen, f'Relative curvature: {k_frame}', (50, 50), cv.FONT_HERSHEY_TRIPLEX, 1.0, (255, 255, 255), 2)
     cv.putText(screen, status, (50, 100), cv.FONT_HERSHEY_TRIPLEX, 1.0, (255, 255, 255), 2)
+    cv.putText(screen, detect_status, (50, frame.shape[0]-50), cv.FONT_HERSHEY_TRIPLEX, 1.0, (255, 255, 255), 2)
 
-    # ys = np.arange(coords[:, 1].min(), coords[:, 1].max())
+    # ys = np.arange(coords[:, 1].min(), coords[:, 1].max()) # verify plotted line
     # pts = np.array([(np.polyval(f, y), y) for y in ys], dtype=np.int32)
     # cv.polylines(screen, [pts], False, (255, 0, 0), 2)
 
